@@ -4,11 +4,6 @@ Unexplored topics
 These are some of the topics about which I have thought about writing an
 explanation, but haven't actually got round to doing so.
 
-  * Basic Syntax
-    * Variable declarations (and gotcha's like `int* x, y`).
-    * `const`.
-    * Declarations and definitions.
-    * Brief walkthrough of Hello World.
   * Value Types
     * Value semantics.
     * Basic pointer semantics, pointer arithmetic, and C-style arrays.
