@@ -7,7 +7,7 @@ features in C which are unavailable in C++ (such as variable-length stack arrays
 or designated initializers), and obviously there are features of C++ which are
 not available in C.
 
-## Declarations and definitions
+## Declarations vs. definitions
 
 A distinction which isn't always obvious in other languages is the distinction
 between _declarations_ and _definitions_. In C and C++, it is possible to
@@ -18,15 +18,49 @@ a `float` could be declared with:
 
     float foo(int a, char b);
 
-Once the function is declared, the compiler will allow us to call it:
+Later, we can define foo:
 
-    float bar() { return 2.0f * foo(42, 'a'); }
+    float foo(int a, char b) { return 2.0f * a * b; }
 
-And as long as we provide the definition somewhere in our program, the linker
-will be able to put the program together later. The distinction between
-declarations and definitions is important, as it is mostly declarations which
-form _header files_ that can be included in a C program, and definitions which
-form the _source files_.
+Once a function is declared, you can write code that calls it. The story is
+slightly different with type declarations and definitions: often, the compiler
+cannot know how to compile code that uses a type without knowing the type
+definition. All that can really be done with a declared type is reference to an
+instance via a pointer:
+
+    struct Foo;  // Declare that there is a type called Foo.
+
+    struct Foo a;  // Try to create an instance of the struct. Compile error.
+    struct Foo *b;  // Pointer to Foo. This will compile.
+    struct Foo bar();  // Declare a function returning Foo. This will compile.
+    void baz() { bar(); }  // Call a function returning Foo. Compile error.
+    struct Bar {
+      struct Foo foo;  // Compile error.
+      struct Foo *foo_ptr;  // Fine.
+    };
+
+    // Define Foo. Below this line, all of the above would now compile.
+    struct Foo {};
+
+## Header files and source files
+
+C/C++ programs are generally broken into two types of files: _header files_ and
+_source files_.
+
+Header files (`*.h`) are files that you can `#include` in other parts of your
+program to make use of code in other files. They mostly contain function
+_declarations_ and type _definitions_.  There are some cases where you might put
+function _definitions_ in headers, and some cases where you might only put type
+_declarations_ in headers, but these are less common.
+
+When a header file declares something but does not define it, the definition
+must be provided in source files (`*.c` for C, or `*.cc` or `*.cpp` for C++).
+Often these will be named the same, so the header `foo.h` will declare the
+functions defined in `foo.c` which can be used by other parts of the program.
+
+Technically speaking, parts of what I have just told you are inaccurate due to
+the exact way in which the compiler, linker, and C preprocessor interact, but
+that is a topic for another time.
 
 ## C/C++ Syntax
 
@@ -53,7 +87,7 @@ declaration
 
     int* x, y;
 
-does not declare two pointers to ints. Instead, it declares `x` as a pointer to
+does not declare two pointers to `int`. Instead, it declares `x` as a pointer to
 `int`, and `y` as an `int`. The position of the spaces is entirely insignificant
 and this is probably more easy to understand when it is written as:
 
@@ -132,6 +166,97 @@ In fact, it is possible to express this all at once with:
     } Foo;
 
 However, this is unnecessary in C++.
+
+### The `union` construct
+
+As I briefly mentioned above, a `union` is a type that has at most one of its
+fields populated. Whilst you could achieve the same thing with a `struct`, the
+primary advantage with a `union` is that since the compiler knows that you will
+only use one field at a time, it stores all the fields in the same place:
+
+    struct Struct {
+      int a;
+      char b;
+    };
+    // sizeof(struct Struct) is sizeof(int) + sizeof(char) + padding
+
+    union Union {
+      int a;
+      char b;
+    };
+    // sizeof(union Union) is max(sizeof(int), sizeof(char))
+
+A `union` does not keep track of which field it has populated. It is the
+programmer's responsibility to **never** read from a field unless that was the
+last field to be written to. Often you will find that you need to manually track
+this by adding an enum that saves the field:
+
+    enum MyTaggedUnionType {
+      MY_TAGGED_UNION_A,
+      MY_TAGGED_UNION_B,
+    };
+
+    struct MyTaggedUnion {
+      enum MyTaggedUnionType type;
+      union {
+        int a;
+        char b;
+      };
+    };
+
+    ...
+    struct MyTaggedUnion my_tagged_union;
+    my_tagged_union.type = MY_TAGGED_UNION_A;
+    my_tagged_union.a = 42;
+    ...
+    if (my_tagged_union.type == MY_TAGGED_UNION_A) {
+      DoSomethingWith(my_tagged_union.a);
+    } else {
+      // handle error or try another branch etc.
+    }
+
+### Anonymous types
+
+If you were looking closely, you may have noticed that the example above
+contains the snippet:
+
+    union {  // Look, no name!
+      int a;
+      char b;
+    };
+
+    a = 42;  // This line assigns to the value in the union.
+
+C supports two contexts for type definitions which are less common in other
+languages. A type can be defined with no name like above, which will introduce
+the contents of the type into the current scope. In the case of a `union`, this 
+introduces multiple variables which act like union fields, but instead of having
+to write `my_union_name.a`, you can just write `a`. Alternatively, you can
+create an anonymous type with a named instance:
+
+    union {
+      int a;
+      char b;
+    } foo;
+
+    foo.a = 42;
+
+The same can be done for structs, which allows complex relationships to be
+defined:
+
+    union {
+      struct {
+        int a;
+        char b;
+      };
+      struct {
+        char c;
+        float d;
+      };
+    };
+
+In this case, either `a` and `b` are populated, or `c` and `d` are, but never
+a mix between the two structs.
 
 ### The `const` keyword
 
