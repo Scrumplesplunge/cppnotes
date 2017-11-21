@@ -4,12 +4,9 @@ Unexplored topics
 These are some of the topics about which I have thought about writing an
 explanation, but haven't actually got round to doing so.
 
-  * Value Types
-    * Value semantics.
-    * Basic pointer semantics, pointer arithmetic, and C-style arrays.
-    * References.
   * Smart Pointers
-  * The C Preprocessor
+  * Compiling, linking, and the C preprocessor.
+    * How compilers and linkers fit together.
     * Preprocessor directives (`#include`, `#define`, ...).
     * Useful predefined macros (`__FILE__`, `__LINE__`, `__func__`, ...).
     * Special operators inside macro definitions (`#`, `##`).
