@@ -54,7 +54,7 @@ To grasp this, we will take a moment to consider how our variables might be laid
 out in memory. We will distinguish between the _variable_ and its _value_ by
 writing the variable name with an arrow to a box containing the value:
 
-![foo points at a box containing the value 42](images/value-types-1.png)
+![foo points at a box containing the value 42](images/value-types-01.png)
 
 The arrow from the `foo` to a box doesn't actually have to be a pointer in
 memory. The variable name is only there for the humans; the compiler can just
@@ -63,7 +63,7 @@ more like:
 
 ![my\_array points at a box containing a size and a data pointer. The data
 pointer points at the actual consecutive block of data that stores the array
-values](images/value-types-2.png)
+values](images/value-types-02.png)
 
 Since we are using variable-sized arrays, we need to store the size of the array
 somewhere, so the box pointed to by `my_array` contains the size. Then we must
@@ -79,7 +79,7 @@ value semantics, and what happens with reference semantics? With reference
 semantics, we might see something like this:
 
 ![Both my\_array and my\_copy point at the same first
-box](images/value-types-3.png)
+box](images/value-types-03.png)
 
 Both variables point at the same box. This is very efficient, as we didn't
 really have to do any work; we just made another variable that points at the
@@ -88,7 +88,7 @@ in `my_copy` we will edit the same data that `my_array` has.  The picture is
 different if we use value semantics:
 
 ![my\_array and my\_copy each have their own independent pair of
-boxes](images/value-types-4.png)
+boxes](images/value-types-04.png)
 
 The two variables have entirely separate boxes. We have to actually perform
 a _deep copy_ of the entire object when we do this assignment, but after we have
