@@ -306,6 +306,10 @@ of the program begins\*. In C, the type signature for `main` is somewhat
 flexible, but it generally returns `int` and accepts either zero parameters or
 two. The two parameter case is a subject for another article.
 
+\* Technically, global constructors run before `main` and you can write custom
+code that runs in a global constructor. This can be tricky to get right,
+however, so it is generally wise to avoid it.
+
 `main` prints "Hello, World!" followed by a newline using `printf`, which is
 provided by the header `stdio.h` from the C standard library. Sharp-eyed readers
 might be thinking, "shouldn't there be a `return 0;`?". In the _particular_ case
