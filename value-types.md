@@ -259,12 +259,115 @@ unless you have a _very_ good reason to use them.
 
 ## Lifetime
 
-TODO
+Both Python and JavaScript are _garbage collected_ languages. This means that as
+a programmer you are not responsible for making sure that memory resources that
+you use are returned once you are done with them. Instead, the _garbage
+collector_ does this for you by detecting whether a value is reachable through
+any variables that are still present in the program. This relieves the
+programmer of some cognitive burden, but there are costs. Garbage collection is
+not free, and many garbage collecters suffer from either spontaneous pauses of
+_multiple milliseconds_ at random times, or from requiring approximately 5-10
+times as much memory to achieve reasonable performance.
+
+C++ does not have garbage collection. The lifetime of your memory resources is
+your responsibility as a programmer. Luckily, in all of the examples we have
+covered so far, we have been using variables with _automatic storage duration_.
+When we create variables in functions, the memory used by their values is
+automatically reclaimed when the function returns. This is generally implemented
+with a call stack, although that is neither guaranteed nor required by the
+language standards:
+
+    int foo() {
+      int x = 1;  // New variable allocated.
+      return x;   // Value of x copied to return value.
+    }  // x is deallocated.
+
+However, this presents us with an issue: what happens if we return a pointer?
+
+    int* foo() {
+      int x = 1;
+      int* y = &x;  // Fine.
+      return y;  // Pointer y is copied to return value.
+    }  // x and y are deallocated.
+
+    void bar() {
+      int* test = foo();
+      *test = 42;  // test points at where x used to be, but x is deallocated!
+    }
+
+This is bad. We have just assigned to memory that we have returned. This is
+_undefined behaviour_ in C++. When you execute code which performs undefined
+behaviour, the program is allowed to do _anything_. It could delete your files,
+or email your drunk photos to your colleagues. Or it could segfault. Or it could
+appear to work, but break when you run an optimized build instead of a debug
+build. The latter two options are markedly more likely with popular compilers.
 
 ## Heap Allocation
 
-TODO
+The simplest workaround is not to return pointers to local variables, since this
+will never work. However, there are things that you _can_ return pointers to.
+You could return a pointer to a global variable, or you could return an object
+which has _dynamic storage duration_:
+
+    int* foo() {
+      int* x = new int;  // Allocate an int with dynamic storage duration.
+      *x = 1;
+      return x;  // pointer x is copied to return value.
+    }  // x is deallocated but the value pointed to by x is not.
+
+    void bar() {
+      int* value = foo();  // The int pointed to by value is still valid.
+      *value = 42;  // This is fine!
+      delete value;  // Deallocate the int pointed to by value.
+      *value = 1;  // This is undefined behaviour.
+    }
+
+Perhaps it is not clear why this is useful immediately, but an example which has
+more immediately obvious use is allocation of arrays with a size that isn't
+known at compile time:
+
+    int* MakeIntArray(int n) {
+      return new int[size];  // Create a new array of n ints.
+    }
+
+    void bar(int n) {
+      int* my_array = MakeIntArray(n);
+      for (int i = 0; i < n; i++) {
+        my_array[i] = i;
+      }
+      delete[] my_array;  // Note that we use delete[] for an array, not delete.
+    }
+
+If we forget to `delete` something which we previously created with `new`, the
+memory which we allocated is _leaked_. What this means is that it is unreachable
+from our program (because we don't have any way to access it any more) but we
+can't reuse the memory because the system thinks we are using it. This memory is
+now wasted until our program exits and the operating system reclaims all of the
+resources that the program was using. Obviously this is bad, and we should try
+to avoid doing it, but it is worse if we `delete` something that was not made
+with `new`, or even if we `delete` something which we already `delete`d. Either
+of these would invoke undefined behaviour and would probably crash our program.
+
+In C, there is a similar but incompatible way to allocate memory: `malloc` and
+`free`. I won't cover these functions because although you can, you should not
+use them in C++.
 
 ## Ownership
 
-TODO (and lead into Smart Pointers)
+Using `new` and `delete` is difficult to get right, especially if you are not
+used to having to deal with them. One of the core concepts that is useful in
+moderating variables with dynamic storage duration is the concept of
+_ownership_. The principle is that whenever you have a pointer variable, you
+should be aware of whether that variable _owns_ the value which it points to or
+not. If it _does not_ own the value, the programmer can simply forget about the
+value when the variable goes out of scope, because it is not their
+responsibility. If the variable _does_ own the value, then when it is finished
+with the programmer should make sure to `delete` the value.
+
+You will often see comments by definitions for pointers or functions that take
+or return pointers which will indicate whether the pointers carry ownership of
+the value they refer to. These comments make it much easier to come to terms
+with unfamiliar code. However, modern C++ has a much better alternative for
+managing ownership of values: smart pointers.
+
+TODO: Link to smart pointers page once written.
