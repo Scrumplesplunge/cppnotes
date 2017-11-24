@@ -4,7 +4,6 @@ Unexplored topics
 These are some of the topics about which I have thought about writing an
 explanation, but haven't actually got round to doing so.
 
-  * Smart Pointers
   * Compiling, linking, and the C preprocessor.
     * How compilers and linkers fit together.
     * Preprocessor directives (`#include`, `#define`, ...).

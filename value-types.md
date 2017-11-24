@@ -368,6 +368,4 @@ You will often see comments by definitions for pointers or functions that take
 or return pointers which will indicate whether the pointers carry ownership of
 the value they refer to. These comments make it much easier to come to terms
 with unfamiliar code. However, modern C++ has a much better alternative for
-managing ownership of values: smart pointers.
-
-TODO: Link to smart pointers page once written.
+managing ownership of values: [smart pointers](smart-pointers.md).
