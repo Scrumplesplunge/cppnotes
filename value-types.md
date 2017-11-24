@@ -279,7 +279,7 @@ language standards:
 
     int foo() {
       int x = 1;  // New variable allocated.
-      return x;   // Value of x copied to return value.
+      return x;  // Value of x copied to return value.
     }  // x is deallocated.
 
 However, this presents us with an issue: what happens if we return a pointer?

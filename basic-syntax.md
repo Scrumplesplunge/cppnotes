@@ -162,7 +162,7 @@ It is perfectly legal to declare a typedef with the same name as the type:
 In fact, it is possible to express this all at once with:
 
     typedef struct Foo {
-      ...   // Contents of struct definition
+      ...  // Contents of struct definition
     } Foo;
 
 However, this is unnecessary in C++.
