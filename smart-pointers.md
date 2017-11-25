@@ -256,7 +256,6 @@ Now that we have the `CharBuffer` type, we can simplify the `String` class:
 
     // This syntax may look new and strange, but it is necessary here. Check out
     // my page about user-defined types to learn more about it.
-    // TODO: Write page about user-defined types.
     String::String(const char* c_string)
         : length_(std::strlen(c_string)),
           buffer_(new char[length_ + 1]) {

@@ -10,13 +10,6 @@ explanation, but haven't actually got round to doing so.
     * Useful predefined macros (`__FILE__`, `__LINE__`, `__func__`, ...).
     * Special operators inside macro definitions (`#`, `##`).
     * Calling macros from macros.
-  * User-defined types
-    * `typedef` and `using`.
-    * `struct` vs. `class`.
-    * `enum` and `enum class`.
-    * `union`.
-    * Special member functions (constructors, destructors, assignment).
-    * Constructor initializer lists.
   * Namespaces and name resolution
     * A `namespace` is not a module.
     * When to use `::`.
