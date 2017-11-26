@@ -89,11 +89,11 @@ instead write it to denote a section:
     class MyClass {
      public:  // Start a public section.
       MyClass();  // Public constructor.
-      void foo();  // Public member function.
+      void Foo();  // Public member function.
       int x;  // Public variable.
      private:  // Start a private section.
       MyClass(int x, int y);  // Private constructor.
-      void bar();  // Private member function.
+      void Bar();  // Private member function.
       int y;  // Private variable.
      public:  // Start another public section.
       ...
@@ -139,17 +139,17 @@ an implicit reference to an instance of the class:
 
     class MyClass {
      public:
-      void foo();
+      void Foo();
      private:
       int x;
     };
 
-    void MyClass::foo() {
+    void MyClass::Foo() {
       x = 1;  // Sets x = 1 on the instance for which foo was called.
     }
 
     MyClass my_class;
-    my_class.foo();
+    my_class.Foo();
 
 ### Special Member Functions
 

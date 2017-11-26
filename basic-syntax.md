@@ -16,11 +16,11 @@ the type of something, and the definition tells you about the contents. For
 example, a function called `foo` which takes an `int` and a `char` and returns
 a `float` could be declared with:
 
-    float foo(int a, char b);
+    float Foo(int a, char b);
 
-Later, we can define foo:
+Later, we can define `Foo`:
 
-    float foo(int a, char b) { return 2.0f * a * b; }
+    float Foo(int a, char b) { return 2.0f * a * b; }
 
 Once a function is declared, you can write code that calls it. The story is
 slightly different with type declarations and definitions: often, the compiler
@@ -32,8 +32,8 @@ instance via a pointer:
 
     struct Foo a;  // Try to create an instance of the struct. Compile error.
     struct Foo *b;  // Pointer to Foo. This will compile.
-    struct Foo bar();  // Declare a function returning Foo. This will compile.
-    void baz() { bar(); }  // Call a function returning Foo. Compile error.
+    struct Foo Bar();  // Declare a function returning Foo. This will compile.
+    void Baz() { Bar(); }  // Call a function returning Foo. Compile error.
     struct Bar {
       struct Foo foo;  // Compile error.
       struct Foo *foo_ptr;  // Fine.
@@ -100,19 +100,19 @@ Really, we should read the above line as
 This is perhaps a little cumbersome at first, but this pattern continues to
 apply when you consider a more complicated declaration:
 
-    int *foo(int x, int y);
+    int *Foo(int x, int y);
 
 We might read the above as
 
 > If the expressions `x` and `y` have type `int`, then the expression
-> `*foo(x, y)` has type `int`.
+> `*Foo(x, y)` has type `int`.
 
 In fact, it is even okay to declare functions like this:
 
-    int x, y, foo(int a, int b), z;
+    int x, y, Foo(int a, int b), z;
 
 If we were to try and make sense of this with our Java hat on, it would look
-like rubbish. With our C hat on, we can see that `foo(int a, int b)` is simply
+like rubbish. With our C hat on, we can see that `Foo(int a, int b)` is simply
 another expression of type `int`. Of course, this particular example is horrific
 and ugly and should be reserved for obfuscated code contests.
 

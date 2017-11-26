@@ -276,11 +276,11 @@ compilation, and linking internally. Suppose that we have the following project:
     // sum.h
     #pragma once
     #include <vector>
-    int sum(const std::vector<int>& numbers);
+    int Sum(const std::vector<int>& numbers);
 
     // sum.cc
     #include "sum.h"
-    int sum(const std::vector<int>& members) {
+    int Sum(const std::vector<int>& members) {
       int total = 0;
       for (int x : members) total += x;
       return total;
@@ -293,7 +293,7 @@ compilation, and linking internally. Suppose that we have the following project:
 
     int main() {
       std::vector<int> numbers = {1, 2, 3, 4, 5};
-      return sum(numbers);  // Should return 15
+      return Sum(numbers);  // Should return 15
     }
 
 We could compile this project with:
@@ -315,7 +315,8 @@ we then modified a single file and compiled it like this again, it would take
 approximately the same amount of time; all the of the files which didn't change
 would have to be compiled again from scratch.
 
-To save some processing time, we could perform the (preprocessing and) compiling separately from linking:
+To save some processing time, we could perform the (preprocessing and) compiling
+separately from linking:
 
     # Phase 1: Compile all of the translation units.
     clang++ -c sum.cc -o sum.o

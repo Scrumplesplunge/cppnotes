@@ -277,21 +277,21 @@ automatically reclaimed when the function returns. This is generally implemented
 with a call stack, although that is neither guaranteed nor required by the
 language standards:
 
-    int foo() {
+    int Foo() {
       int x = 1;  // New variable allocated.
       return x;  // Value of x copied to return value.
     }  // x is deallocated.
 
 However, this presents us with an issue: what happens if we return a pointer?
 
-    int* foo() {
+    int* Foo() {
       int x = 1;
       int* y = &x;  // Fine.
       return y;  // Pointer y is copied to return value.
     }  // x and y are deallocated.
 
-    void bar() {
-      int* test = foo();
+    void Bar() {
+      int* test = Foo();
       *test = 42;  // test points at where x used to be, but x is deallocated!
     }
 
@@ -309,14 +309,14 @@ will never work. However, there are things that you _can_ return pointers to.
 You could return a pointer to a global variable, or you could return an object
 which has _dynamic storage duration_:
 
-    int* foo() {
+    int* Foo() {
       int* x = new int;  // Allocate an int with dynamic storage duration.
       *x = 1;
       return x;  // pointer x is copied to return value.
     }  // x is deallocated but the value pointed to by x is not.
 
-    void bar() {
-      int* value = foo();  // The int pointed to by value is still valid.
+    void Bar() {
+      int* value = Foo();  // The int pointed to by value is still valid.
       *value = 42;  // This is fine!
       delete value;  // Deallocate the int pointed to by value.
       *value = 1;  // This is undefined behaviour.
@@ -330,7 +330,7 @@ known at compile time:
       return new int[size];  // Create a new array of n ints.
     }
 
-    void bar(int n) {
+    void Bar(int n) {
       int* my_array = MakeIntArray(n);
       for (int i = 0; i < n; i++) {
         my_array[i] = i;
